@@ -11,10 +11,11 @@
 </head>
 <body style="padding-left: 10px;">
     <p style="font-size: 30px; font-weight: bold;padding-left: 10px;padding-top: 10px;">vocabulary</p>
-    <input type="file" style='display: inline-block;width: 500px;'>
+       <input type="file">
     <button id="myBtn">Try it</button>
-    <pre id="file" style="display: none;"></pre>
+    <pre id="file"></pre>
     <div id="music"></div>
+
     <script>
         document.getElementById("myBtn").addEventListener("click", function () {
             var reader = new FileReader();
@@ -29,36 +30,46 @@
                     if (item[0] == '-') {
                         const string = item.substr(1);
                         const arrStringE_Vi = string.split(':');
-                        const dataUrl = await callHtml(arrStringE_Vi[0])
-                        dataConvert.push({
-                            string_E: arrStringE_Vi[0] ? arrStringE_Vi[0].trim() : '',
-                            string_Vi: arrStringE_Vi[1] ? arrStringE_Vi[1].trim() : '',
-                            dataUrl: dataUrl,
-                        })
+                        const data = {
+                            key: arrStringE_Vi[0].trim(),
+                        };
+                        const dataSrc = await test(data); // get link phat am
+                        createdNewDiv(arrStringE_Vi, dataSrc);
                     }
                 }
-                var music = document.getElementById('music');
-                var htmlTable = "";
-                for (var i = 0; i < dataConvert.length; i++) {
-                    htmlTable += "<div style='display: flex;align-items: center; margin-top: 7px'>";
-                    htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 20px;font-weight: bold;'>" + dataConvert[i].string_E + " : </span>";
-                    htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 18px;font-weight: bold;'>" + dataConvert[i].string_Vi + "</span> </div>";
-                    htmlTable += "<div style='display: flex;align-items: center;margin-top: 5px'>";
-                    for (var j = 0; j < dataConvert[i].dataUrl.length; j++) {
-                        const urlMusic = dataConvert[i].dataUrl[j];
-                        // console.log(urlMusic)
-                        const keyTrack = "'" + dataConvert[i].string_E + j + "'";
-                        htmlTable += `<span style='margin: 0 10px'>${j == 0 ? 'UK' : 'US'}</span>`
-                        htmlTable += "<audio id=" + keyTrack + "> <source src=" + urlMusic.url + " /> </audio> <div id='player-container'> <button style='display: flex;justify-content: center;align-items: center;' id='play-pause' onclick=playPause(" + keyTrack + ")><span style='font-size: 16px' class='glyphicon glyphicon-volume-up'></span></button> </div>";
-                        htmlTable += `<span style='margin: 0 10px'>${urlMusic.ipa}</span>`
-                    }
-                    htmlTable += "</div></div>";
-                }
-                music.innerHTML = htmlTable;
-                var controlBtn = document.getElementById('play-pause');
             });
             reader.readAsText(document.querySelector('input').files[0]);
         });
+        const createdNewDiv = (stringData, dataSrc) => {
+            var string_E = stringData[0].trim();
+            var string_Vi = stringData[1].trim();
+            var newDiv = document.createElement("div");
+            newDiv.setAttribute("id", string_E);
+
+            var htmlTable = "";
+            htmlTable += "<div style='display: flex;align-items: center; margin-top: 7px'>";
+            htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 20px;font-weight: bold;'>" + string_E + " : </span>";
+            htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 18px;font-weight: bold;'>" + string_Vi + "</span> </div>";
+            if (dataSrc && dataSrc.data) {
+                htmlTable += "<div style='display: flex;align-items: center;margin-top: 5px'>";
+                for (var j = 0; j < dataSrc.data.length; j++) {
+                    const urlMusic = dataSrc.data[j];
+                    const keyTrack = "'" + string_E + j + "'";
+                    htmlTable += `<span style='margin: 0 10px'>${urlMusic.type}</span>`
+                    htmlTable += "<audio id=" + keyTrack + "> <source src=" + urlMusic.url + " /> </audio> <div id='player-container'> <button style='display: flex;justify-content: center;align-items: center;' id='play-pause' onclick=playPause(" + keyTrack + ")><span style='font-size: 16px' class='glyphicon glyphicon-volume-up'></span></button> </div>";
+                    htmlTable += `<span style='margin: 0 10px'>${urlMusic.ipa}</span>`
+                }
+
+                htmlTable += "</div>";
+            }
+            htmlTable += "</div>";
+            newDiv.innerHTML = htmlTable;
+            var controlBtn = document.getElementById('play-pause');
+
+            var music = document.getElementById('music');
+            music.appendChild(newDiv);
+        }
+
         function playPause(keyTrack) {
             var track = document.getElementById(keyTrack);
             if (track.paused) {
@@ -67,31 +78,18 @@
                 track.pause();
             }
         }
-        async function callHtml(textSearch) {
-            const data = [];
-            const urlSearch = "https://dictionary.cambridge.org/vi/dictionary/english/" + textSearch.trim();
-            console.log(urlSearch)
-            const resp = await axios({
-                method: 'get',
-                url: urlSearch,
-            });
-            const parsed = $($.parseHTML(resp.data)).find(".pos-header");
-            if (parsed.length > 0) {
-                const dataReturn = parsed[0];
-                const dataUrlMusic = dataReturn.getElementsByClassName("dpron-i");
-                for (let item of dataUrlMusic) {
-                    const divMusic = item.getElementsByTagName("source");
-                    if (divMusic.length > 0) {
-                        const url = "https://dictionary.cambridge.org" + divMusic[0].getAttribute("src");
-                        const ipa = item.getElementsByClassName("ipa")
-                        data.push({
-                            ipa: "\\" + ipa[0].innerHTML + "\\",
-                            url: url,
-                        })
-                    }
+        const test = async (data) => {
+            // const urlSever = "https://learn-english-tund.herokuapp.com/learn-english";
+            const urlSever = "http://localhost:3000/learn-english";
+            const response = await fetch(urlSever, {
+                method: 'POST',
+                body: JSON.stringify(data), // string or object
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            }
-            return data;
+            });
+            const myJson = await response.json(); //extract JSON from the http response
+            return myJson;
         }
     </script>
 </body>
