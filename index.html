@@ -23,7 +23,7 @@
             .newDiv {
                 width: 100%;
                 border-bottom: 1px #e5e5e5 solid;
-                border-right: 0px #e5e5e5 solid;
+                border-right: 1px #e5e5e5 solid;
                 padding-left: 20px;
                 margin-bottom: 10px;
                 /* The width is 100%, when the viewport is 800px or smaller */
@@ -83,7 +83,7 @@
                     const keyTrack = "'" + string_E + j + "'";
                     htmlTable += `<span style='margin: 0 10px'>${urlMusic.type}</span>`
                     htmlTable += "<audio id=" + keyTrack + "> <source src=" + urlMusic.url + " /> </audio> <div id='player-container'> <button style='display: flex;justify-content: center;align-items: center;' id='play-pause' onclick=playPause(" + keyTrack + ")><span style='font-size: 16px' class='glyphicon glyphicon-volume-up'></span></button> </div>";
-                    htmlTable += `<span style='margin: 0 10px'>${urlMusic.ipa}</span>`
+                    htmlTable += `<span style='margin: 0 10px;text-transform: uppercase;font-weight: bold;'> /${urlMusic.ipa}/</span>`
                 }
 
                 htmlTable += "</div>";
