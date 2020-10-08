@@ -81,9 +81,9 @@
                 for (var j = 0; j < dataSrc.data.length; j++) {
                     const urlMusic = dataSrc.data[j];
                     const keyTrack = "'" + string_E + j + "'";
-                    htmlTable += `<span style='margin: 0 10px'>${urlMusic.type}</span>`
+                    htmlTable += `<span style='margin: 0 10px;text-transform: uppercase;font-weight: bold;'>${urlMusic.type}</span>`
                     htmlTable += "<audio id=" + keyTrack + "> <source src=" + urlMusic.url + " /> </audio> <div id='player-container'> <button style='display: flex;justify-content: center;align-items: center;' id='play-pause' onclick=playPause(" + keyTrack + ")><span style='font-size: 16px' class='glyphicon glyphicon-volume-up'></span></button> </div>";
-                    htmlTable += `<span style='margin: 0 10px;text-transform: uppercase;font-weight: bold;'> /${urlMusic.ipa}/</span>`
+                    htmlTable += `<span style='margin: 0 10px'> /${urlMusic.ipa}/</span>`
                 }
 
                 htmlTable += "</div>";
