@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>ECharts Sample</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -9,11 +10,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+
 <body style="padding-left: 10px;">
     <p style="font-size: 30px; font-weight: bold;padding-left: 10px;padding-top: 10px;">vocabulary</p>
-       <input type="file">
+    <input type="file" style="width: 250px;display: initial;">
     <button id="myBtn">Try it</button>
-    <pre id="file"></pre>
+    <pre id="file" style="display: none;"></pre>
     <div id="music"></div>
 
     <script>
@@ -35,11 +37,13 @@
                         };
                         const dataSrc = await test(data); // get link phat am
                         createdNewDiv(arrStringE_Vi, dataSrc);
+
                     }
                 }
             });
             reader.readAsText(document.querySelector('input').files[0]);
         });
+
         const createdNewDiv = (stringData, dataSrc) => {
             var string_E = stringData[0].trim();
             var string_Vi = stringData[1].trim();
@@ -78,6 +82,7 @@
                 track.pause();
             }
         }
+
         const test = async (data) => {
             // const urlSever = "https://learn-english-tund.herokuapp.com/learn-english";
             const urlSever = "http://localhost:3000/learn-english";
@@ -91,6 +96,12 @@
             const myJson = await response.json(); //extract JSON from the http response
             return myJson;
         }
+
+
     </script>
+
+
+
 </body>
+
 </html>
