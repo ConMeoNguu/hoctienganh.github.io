@@ -16,7 +16,7 @@
     <input type="file" style="width: 250px;display: initial;">
     <button id="myBtn">Try it</button>
     <pre id="file" style="display: none;"></pre>
-    <div id="music"></div>
+    <div id="music" style="display: flex;flex-direction: row;flex-wrap: wrap; margin-top: 20px;"></div>
 
     <script>
         document.getElementById("myBtn").addEventListener("click", function () {
@@ -49,13 +49,16 @@
             var string_Vi = stringData[1].trim();
             var newDiv = document.createElement("div");
             newDiv.setAttribute("id", string_E);
+            newDiv.style.width = "25%";
+            newDiv.style.borderRight = "1px #e5e5e5 solid";
+            newDiv.style.marginBottom = "10px";
 
             var htmlTable = "";
-            htmlTable += "<div style='display: flex;align-items: center; margin-top: 7px'>";
+            htmlTable += "<div style='display: flex;align-items: center; margin-top: 5px; margin-bottom: 5px;'>";
             htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 20px;font-weight: bold;'>" + string_E + " : </span>";
             htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 18px;font-weight: bold;'>" + string_Vi + "</span> </div>";
             if (dataSrc && dataSrc.data) {
-                htmlTable += "<div style='display: flex;align-items: center;margin-top: 5px'>";
+                htmlTable += "<div style='display: flex;align-items: center;margin-top: 5px; margin-bottom: 10px'>";
                 for (var j = 0; j < dataSrc.data.length; j++) {
                     const urlMusic = dataSrc.data[j];
                     const keyTrack = "'" + string_E + j + "'";
@@ -84,8 +87,8 @@
         }
 
         const test = async (data) => {
-            // const urlSever = "https://learn-english-tund.herokuapp.com/learn-english";
-            const urlSever = "http://localhost:3000/learn-english";
+            const urlSever = "https://learn-english-tund.herokuapp.com/learn-english";
+            // const urlSever = "http://localhost:3000/learn-english";
             const response = await fetch(urlSever, {
                 method: 'POST',
                 body: JSON.stringify(data), // string or object
