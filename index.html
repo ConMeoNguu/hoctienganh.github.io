@@ -34,93 +34,101 @@
 
 <body style="padding-left: 10px;">
     <p style="font-size: 30px; font-weight: bold;padding-left: 10px;padding-top: 10px;">vocabulary</p>
-    <div  style="padding-left: 10px;"><input type="file" style="width: 250px;display: initial;">
-        <button id="myBtn">Try it</button></di>
-    <pre id="file" style="display: none;"></pre>
-    <div id="music" style="display: flex;flex-direction: row;flex-wrap: wrap; margin-top: 20px;"></div>
+    <div style="padding-left: 10px;">
+        <input type="file" style="width: 250px;display: initial;">
+        <button id="myBtn">Get data in file</button>
+        </di>
+        <pre id="file" style="display: none;"></pre>
+        <div id="music" style="display: flex;flex-direction: row;flex-wrap: wrap; margin-top: 20px;"></div>
 
-    <script>
-        document.getElementById("myBtn").addEventListener("click", function () {
-            var reader = new FileReader();
-            reader.addEventListener('load', async function () {
-                var duLieu = this.result + '';
-                var find = '"';
-                var re = new RegExp(find, 'g');
-                duLieu = duLieu.replace(re, '');
-                var ar = duLieu.split('\n');
-                const dataConvert = [];
-                for (let item of ar) {
-                    if (item[0] == '-') {
-                        const string = item.substr(1);
-                        const arrStringE_Vi = string.split(':');
-                        const data = {
-                            key: arrStringE_Vi[0].trim(),
-                        };
-                        const dataSrc = await test(data); // get link phat am
-                        createdNewDiv(arrStringE_Vi, dataSrc);
+        <script>
+            document.getElementById("myBtn").addEventListener("click", function () {
+                cleanDiv();
+                var reader = new FileReader();
+                reader.addEventListener('load', async function () {
+                    var duLieu = this.result + '';
+                    var find = '"';
+                    var re = new RegExp(find, 'g');
+                    duLieu = duLieu.replace(re, '');
+                    var ar = duLieu.split('\n');
+                    const dataConvert = [];
+                    for (let item of ar) {
+                        if (item[0] == '-') {
+                            const string = item.substr(1);
+                            const arrStringE_Vi = string.split(':');
+                            const data = {
+                                key: arrStringE_Vi[0].trim(),
+                            };
+                            const dataSrc = await test(data); // get link phat am
+                            createdNewDiv(arrStringE_Vi, dataSrc);
 
+                        }
                     }
-                }
+                });
+                reader.readAsText(document.querySelector('input').files[0]);
             });
-            reader.readAsText(document.querySelector('input').files[0]);
-        });
 
-        const createdNewDiv = (stringData, dataSrc) => {
-            var string_E = stringData[0].trim();
-            var string_Vi = stringData[1].trim();
-            var newDiv = document.createElement("div");
-            newDiv.setAttribute("id", string_E);
-            newDiv.className = "newDiv";
+            const createdNewDiv = (stringData, dataSrc) => {
+                var string_E = stringData[0].trim();
+                var string_Vi = stringData[1].trim();
+                var newDiv = document.createElement("div");
+                newDiv.setAttribute("id", string_E);
+                newDiv.className = "newDiv";
 
-            var htmlTable = "";
-            htmlTable += "<div style='display: flex;align-items: center; margin-top: 5px; margin-bottom: 5px;'>";
-            htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 20px;font-weight: bold;'>" + string_E + " : </span>";
-            htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 18px;font-weight: bold;'>" + string_Vi + "</span> </div>";
-            if (dataSrc && dataSrc.data) {
-                htmlTable += "<div style='display: flex;align-items: center;margin-top: 5px; margin-bottom: 10px'>";
-                for (var j = 0; j < dataSrc.data.length; j++) {
-                    const urlMusic = dataSrc.data[j];
-                    const keyTrack = "'" + string_E + j + "'";
-                    htmlTable += `<span style='margin: 0 10px;text-transform: uppercase;font-weight: bold;'>${urlMusic.type}</span>`
-                    htmlTable += "<audio id=" + keyTrack + "> <source src=" + urlMusic.url + " /> </audio> <div id='player-container'> <button style='display: flex;justify-content: center;align-items: center;' id='play-pause' onclick=playPause(" + keyTrack + ")><span style='font-size: 16px' class='glyphicon glyphicon-volume-up'></span></button> </div>";
-                    htmlTable += `<span style='margin: 0 10px'> /${urlMusic.ipa}/</span>`
+                var htmlTable = "";
+                htmlTable += "<div style='display: flex;align-items: center; margin-top: 5px; margin-bottom: 5px;'>";
+                htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 20px;font-weight: bold;'>" + string_E + " : </span>";
+                htmlTable += "<span style='color: #000;margin: 0 10px;font-size: 18px;font-weight: bold;'>" + string_Vi + "</span> </div>";
+                if (dataSrc && dataSrc.data) {
+                    htmlTable += "<div style='display: flex;align-items: center;margin-top: 5px; margin-bottom: 10px'>";
+                    for (var j = 0; j < dataSrc.data.length; j++) {
+                        const urlMusic = dataSrc.data[j];
+                        const keyTrack = "'" + string_E + j + "'";
+                        htmlTable += `<span style='margin: 0 10px'>${urlMusic.type}</span>`
+                        htmlTable += "<audio id=" + keyTrack + "> <source src=" + urlMusic.url + " /> </audio> <div id='player-container'> <button style='display: flex;justify-content: center;align-items: center;' id='play-pause' onclick=playPause(" + keyTrack + ")><span style='font-size: 16px' class='glyphicon glyphicon-volume-up'></span></button> </div>";
+                        htmlTable += `<span style='margin: 0 10px;text-transform: uppercase;font-weight: bold;'> /${urlMusic.ipa}/</span>`
+                    }
+
+                    htmlTable += "</div>";
                 }
-
                 htmlTable += "</div>";
+                newDiv.innerHTML = htmlTable;
+                var controlBtn = document.getElementById('play-pause');
+
+                var music = document.getElementById('music');
+                music.appendChild(newDiv);
             }
-            htmlTable += "</div>";
-            newDiv.innerHTML = htmlTable;
-            var controlBtn = document.getElementById('play-pause');
 
-            var music = document.getElementById('music');
-            music.appendChild(newDiv);
-        }
-
-        function playPause(keyTrack) {
-            var track = document.getElementById(keyTrack);
-            if (track.paused) {
-                track.play();
-            } else {
-                track.pause();
-            }
-        }
-
-        const test = async (data) => {
-            const urlSever = "https://learn-english-tund.herokuapp.com/learn-english";
-            // const urlSever = "http://localhost:3000/learn-english";
-            const response = await fetch(urlSever, {
-                method: 'POST',
-                body: JSON.stringify(data), // string or object
-                headers: {
-                    'Content-Type': 'application/json'
+            function playPause(keyTrack) {
+                var track = document.getElementById(keyTrack);
+                if (track.paused) {
+                    track.play();
+                } else {
+                    track.pause();
                 }
-            });
-            const myJson = await response.json(); //extract JSON from the http response
-            return myJson;
-        }
+            }
 
+            const test = async (data) => {
+                const urlSever = "https://learn-english-tund.herokuapp.com/learn-english";
+                // const urlSever = "http://localhost:3000/learn-english";
+                const response = await fetch(urlSever, {
+                    method: 'POST',
+                    body: JSON.stringify(data), // string or object
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const myJson = await response.json(); //extract JSON from the http response
+                return myJson;
+            }
 
-    </script>
+            const cleanDiv = () => {
+                var music = document.getElementById('music');
+                while (music.hasChildNodes()) {
+                    music.removeChild(music.firstChild);
+                }
+            }
+        </script>
 
 
 
